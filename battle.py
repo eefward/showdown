@@ -103,7 +103,7 @@ def faint_animation(x, y, color):
 
 
 def opponent_attack_animation(x, y, target):
-    # Opponent attacking animation (same as the player's attack)
+    # Opponent attacking animation
     attack_animation(x, y, target.color)
 
 def opponent_bounce_animation(x, y, target):
