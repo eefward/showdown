@@ -1,11 +1,10 @@
-# (same imports & init)
 import pygame
 import random
 
 pygame.init()
 WIDTH, HEIGHT = 960, 640
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Pokémon Showdown - Battle UI")
+pygame.display.set_caption("showdown")
 
 font = pygame.font.SysFont("arial", 20)
 log_font = pygame.font.SysFont("consolas", 16)
@@ -82,7 +81,6 @@ def switch_animation_in(x, y, color):
         pygame.time.delay(30)
 
 def attack_animation(x, y, color):
-    # Simple attack flash effect (same for player and opponent)
     for _ in range(5):
         pygame.draw.circle(screen, color, (x + 60, y + 60), 50)
         pygame.display.update()
@@ -92,27 +90,22 @@ def attack_animation(x, y, color):
         pygame.time.delay(100)
 
 
-def faint_animation(x, y, color):
-    # Faint animation (Pokemon slowly fades out)
-    for i in range(255, 0, -5):  # Fade out effect
+def faint_animation(x, y):
+    for i in range(255, 0, -5):
         pygame.draw.rect(screen, (i, i, i), (x, y, 120, 120))
         pygame.display.update()
         pygame.time.delay(50)
-    pygame.draw.rect(screen, BG_COLOR, (x, y, 120, 120))  # Make it disappear
+    pygame.draw.rect(screen, BG_COLOR, (x, y, 120, 120))  
     pygame.display.update()
 
 
 def opponent_attack_animation(x, y, target):
-    # Opponent attacking animation
     attack_animation(x, y, target.color)
 
 def opponent_bounce_animation(x, y, target):
-    # Opponent bouncing animation
     bounce_sprite(x, y, target.color)
 
-
-# Helper
-# Define all moves
+# Moves
 FLAMETHROWER = Move("Flamethrower", 30)
 FIRE_SPIN = Move("Fire Spin", 20)
 ROAR = Move("Roar", 10)
@@ -140,7 +133,6 @@ RECOVER = Move("Recover", 0)
 
 
 # Teams
-# Player's team (manually assigned moves)
 team1 = [
     Pokemon("Charizard", 120, [FLAMETHROWER, FIRE_SPIN, ROAR, SLASH], PLAYER_COLOR),
     Pokemon("Blastoise", 130, [WATER_GUN, HYDRO_PUMP, BITE, TACKLE], PLAYER_COLOR),
@@ -150,7 +142,7 @@ team1 = [
     Pokemon("Machamp", 130, [HEADBUTT, SLASH, TACKLE, ROAR], PLAYER_COLOR)
 ]
 
-# Enemy team (random for now — you can customize these too!)
+# Enemy team 
 team2 = [
     Pokemon("Gyarados", 140, [BITE, WATER_GUN, HYDRO_PUMP, ROAR], ENEMY_COLOR),
     Pokemon("Arcanine", 125, [FIRE_SPIN, SLASH, TACKLE, FLAMETHROWER], ENEMY_COLOR),
@@ -265,8 +257,7 @@ def ai_turn():
     move = random.choice(enemy.moves)
     log(f"{enemy.name} used {move.name}!")
 
-    # Trigger opponent attack animation with bounce effect
-    opponent_attack_animation(100, 300, player)  # Bounce on the player's Pokémon during opponent's attack
+    opponent_attack_animation(100, 300, player) 
 
     player.take_damage(move.power)
 
@@ -274,10 +265,8 @@ def ai_turn():
 
     if player.is_fainted():
         log(f"{player.name} fainted!")
-        faint_animation(100, 300, player.color)  # Trigger faint animation for player
+        faint_animation(100, 300, player.color) 
         player_index += 1
-
-
 
 # Main loop
 running = True
@@ -297,11 +286,9 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN and not game_over:
             mx, my = event.pos
 
-            # 🧼 1. CLOSE item menu if you click outside of it
             if show_item_menu and not pygame.Rect(300, 200, 360, 160).collidepoint(mx, my):
                 show_item_menu = False
 
-            # 🧼 2. CLOSE switch menu if you click outside (optional!)
             if show_switch_menu and not pygame.Rect(150, 150, 660, 300).collidepoint(mx, my):
                 show_switch_menu = False
 
@@ -312,7 +299,6 @@ while running:
                     x = 160 + (i % 3) * 220
                     y = 200 + (i // 3) * 100
                     if x <= mx <= x + 200 and y <= my <= y + 80:
-                        # Animate the switch
                         log(f"{team1[player_index].name} switched out!")
                         switch_animation_out(100, 300, team1[player_index].color)
                         player_index = i
@@ -321,7 +307,6 @@ while running:
                         show_switch_menu = False
                         player_turn = False
                 continue
-
 
             # Item menu logic
             if show_item_menu:
@@ -349,18 +334,16 @@ while running:
                         target = team2[enemy_index]
                         log(f"{team1[player_index].name} used {move.name}!")
 
-                        # Use the same animation for the player's attack
-                        attack_animation(600, 100, target.color)  # Animate attack (flash effect)
+                        attack_animation(600, 100, target.color) 
                         target.take_damage(move.power)
-                        bounce_sprite(600, 100, target.color)    # Bounce effect on target
+                        bounce_sprite(600, 100, target.color)   
 
                         
                         if target.is_fainted():
                             log(f"{target.name} fainted!")
-                            faint_animation(600, 100, target.color)  # Trigger faint animation for enemy
+                            faint_animation(600, 100, target.color)  
                             enemy_index += 1
                         player_turn = False
-
 
             # Switch button
             if 100 <= mx <= 250 and 580 <= my <= 620:
@@ -368,7 +351,7 @@ while running:
 
             # Item button
             if 700 <= mx <= 850 and 580 <= my <= 620:
-                show_item_menu = not show_item_menu  # ← toggles now
+                show_item_menu = not show_item_menu
 
     if not player_turn and not game_over:
         pygame.time.delay(700)
